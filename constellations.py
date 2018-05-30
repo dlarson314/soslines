@@ -2,6 +2,7 @@ import re
 
 import numpy as np
 import matplotlib.pyplot as mpl
+import soslines as sos
 
 
 def read_bsc():
@@ -85,7 +86,8 @@ def foo2():
 def foo3():
     data = read_bsc()
     name = [x[1] for x in data]
-    ind = np.array([i for i, x in enumerate(name) if re.search('Ori', x)])
+    #ind = np.array([i for i, x in enumerate(name) if re.search('Ori', x)])
+    ind = np.array([i for i, x in enumerate(name) if re.search('Gem', x)])
 
     num = [data[i][0] for i in ind]
     name = [data[i][1] for i in ind]
@@ -102,11 +104,14 @@ def foo3():
     pairs = [[int(x) for x in line.split()] for line in lines if not re.search('#', line)]
 
     for p in pairs:
-        a = h[p[0]]
-        b = h[p[1]]
-        neglon = (a[0], b[0])
-        lat = (a[1], b[1])
-        mpl.plot(neglon, lat, '--k', alpha=0.5)
+        try:
+            a = h[p[0]]
+            b = h[p[1]]
+            neglon = (a[0], b[0])
+            lat = (a[1], b[1])
+            mpl.plot(neglon, lat, '--k', alpha=0.5)
+        except:
+            pass
 
     mpl.scatter(-glon, glat, c=-vmag, s=(8-vmag)*5)
     g = np.where(vmag < 5)[0]
@@ -117,9 +122,16 @@ def foo3():
     mpl.show()
 
 
+def foo4():
+    c = sos.Canvas(height=2048)
+
+    
+
+
 
 if __name__ == "__main__":
     #read_bsc()
     #foo()
     #foo2()
-    foo3()
+    #foo3()
+    foo4()
