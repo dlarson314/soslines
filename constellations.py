@@ -27,6 +27,28 @@ def read_bsc():
     return data
 
 
+def read_bsc2():
+    with open('bsc5.dat') as f:
+        lines = f.readlines()
+    data = {} 
+    for line in lines:
+        try:
+            num = int(line[0:4])
+            name = line[4:14].strip()
+            #print(line[90:107])
+            glon = float(line[90:96])
+            if glon > 180:
+                glon = glon - 360.0
+            glat = float(line[96:102])
+            vmag = float(line[102:107])
+            data[num] = (glon, glat, name, vmag)
+        except:
+            #print('fail')
+            #print(line)
+            pass
+    return data
+
+
 def foo():
     data = read_bsc()
     num = [x[0] for x in data]
@@ -87,7 +109,11 @@ def foo3():
     data = read_bsc()
     name = [x[1] for x in data]
     #ind = np.array([i for i, x in enumerate(name) if re.search('Ori', x)])
-    ind = np.array([i for i, x in enumerate(name) if re.search('Gem', x)])
+    #ind = np.array([i for i, x in enumerate(name) if re.search('Gem', x)])
+    #ind = np.array([i for i, x in enumerate(name) if re.search('Cas', x)])
+    #ind = np.array([i for i, x in enumerate(name) if re.search('UMa', x)])
+    #ind = np.array([i for i, x in enumerate(name) if re.search('UMi', x)])
+    ind = np.array([i for i, x in enumerate(name) if re.search('Dra', x)])
 
     num = [data[i][0] for i in ind]
     name = [data[i][1] for i in ind]
@@ -123,8 +149,24 @@ def foo3():
 
 
 def foo4():
+    data = read_bsc2()
+
+    with open('constellations.txt') as f:
+        lines = f.readlines()
+    pairs = [[int(x) for x in line.split()] for line in lines if not re.search('#', line)]
+
     c = sos.Canvas(height=2048)
 
+    for p in pairs:
+        print(p)
+        a = data[p[0]]
+        b = data[p[1]]
+        lon = np.array((a[0], b[0]))
+        lat = np.array((a[1], b[1]))
+        mpl.plot(-lon, lat, '--k', alpha=0.5)
+        c.line(a[1], -a[0], b[1], -b[0], line_width=0.5)
+    c.imsave('constellations1.png')
+    mpl.show()
     
 
 
